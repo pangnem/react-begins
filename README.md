@@ -4,12 +4,12 @@
 
 - 이 프로젝트 폴더가 아닌 다른 폴더(예: C:\Users\dooley\temp)에서 새 React 앱을 생성하시오.
 
-    > cd  C:\Users\dooley\temp
-    > npx create-react-app my-app
+    cd  C:\Users\dooley\temp
+    npx create-react-app my-app
 
 - 프로젝트를 개발 모드로 시작
 
-    > yarn start
+    yarn start
 
 - 브라우저로 http://localhost:3000/ 화면이 뜨는지 확인
 
