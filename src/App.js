@@ -1,22 +1,14 @@
-import logo from './logo.svg';
 import './App.css';
+import { ProductGrid } from './ProductGrid';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Hello, React World!</h1>
-        <p>
-          시작이 반이다
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h1>Shopper's Universe</h1>
+        <div class="column-md6">
+          <ProductGrid />
+        </div>
       </header>
     </div>
   );
