@@ -6,7 +6,12 @@ export class ProductGrid extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { error: null, loaded: false, categories: [] };
+        this.state = { error: null, loaded: false, categories: [], inStockOnly: false };
+
+        this.handleOnlyProductsChange = (event) => {
+            const inStockOnly = event.target.checked;
+            this.setState({ inStockOnly });
+        };
     }
 
     componentDidMount() {
@@ -38,6 +43,15 @@ export class ProductGrid extends React.Component {
                         Error occurred...
                     </div>
                 }
+                <form>
+                    <div className="form-check">
+                        <label className="form-check-label">
+                            <input type="checkbox" className="form-check-input" 
+                                   onChange={this.handleOnlyProductsChange} />
+                            Only products in stock
+                        </label>
+                    </div>
+                </form>
                 {this.state.loaded &&
                     <table className="table">
                         <thead>
@@ -51,7 +65,8 @@ export class ProductGrid extends React.Component {
                                 <CategoryProductList
                                     key={category}
                                     category={category}
-                                    products={this.state.categories[category]} />
+                                    products={this.state.categories[category]}
+                                    inStockOnly={this.state.inStockOnly} />
                             )}
                         </tbody>
                     </table>
