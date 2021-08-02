@@ -1,23 +1,9 @@
 # react-begins
 
-## Lab 4
+## Lab 5
 
-- public/data/products-data.json 파일을 추가하고, 아래 내용을 넣을 것.
-
-```
-[
-  {"category": "Sporting Goods", "price": "$49.99", "stocked": true, "name": "Football"},
-  {"category": "Sporting Goods", "price": "$9.99", "stocked": true, "name": "Baseball"},
-  {"category": "Sporting Goods", "price": "$29.99", "stocked": false, "name": "Basketball"},
-  {"category": "Electronics", "price": "$99.99", "stocked": true, "name": "iPod Touch"},
-  {"category": "Electronics", "price": "$399.99", "stocked": false, "name": "iPhone 5"},
-  {"category": "Electronics", "price": "$199.99", "stocked": true, "name": "Nexus 7"}
-]
-```
-
-- 브라우저에서 http://localhost:3000/data/products-data.json 을 방문하여 JSON 데이터가 표시되는지 확인.
-
-- ProductGrid 컴포넌트를 개선하여, "data/products-data.json" URL을 fetch하여 데이터를 읽도록 변경할 것.
+- ProductGrid 컴포넌트 상단에 체크박스를 추가하고, 체크박스가 선택되면, stocked=true 인
+  제품들만 목록에 표시할 것.
 
 - 예제 솔루션:
 
@@ -30,7 +16,12 @@ export class ProductGrid extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { error: null, loaded: false, categories: [] };
+        this.state = { error: null, loaded: false, categories: [], inStockOnly: false };
+
+        this.handleOnlyProductsChange = (event) => {
+            const inStockOnly = event.target.checked;
+            this.setState({ inStockOnly });
+        };
     }
 
     componentDidMount() {
@@ -62,6 +53,15 @@ export class ProductGrid extends React.Component {
                         Error occurred...
                     </div>
                 }
+                <form>
+                    <div className="form-check">
+                        <label className="form-check-label">
+                            <input type="checkbox" className="form-check-input" 
+                                   onChange={this.handleOnlyProductsChange} />
+                            Only products in stock
+                        </label>
+                    </div>
+                </form>
                 {this.state.loaded &&
                     <table className="table">
                         <thead>
@@ -75,7 +75,8 @@ export class ProductGrid extends React.Component {
                                 <CategoryProductList
                                     key={category}
                                     category={category}
-                                    products={this.state.categories[category]} />
+                                    products={this.state.categories[category]}
+                                    inStockOnly={this.state.inStockOnly} />
                             )}
                         </tbody>
                     </table>
@@ -85,3 +86,45 @@ export class ProductGrid extends React.Component {
     }
 }
 ```
+
+```
+import React from 'react';
+import { ProductListItem } from './ProductListItem';
+
+export class CategoryProductList extends React.Component {
+
+    render() {
+        const filteredProducts = this.props.inStockOnly
+            ? this.props.products.filter((product) => product.stocked)
+            : this.props.products;
+        return (
+            <>
+                <tr className="category">
+                    <td colSpan="2">{this.props.category}</td>
+                </tr>
+                {filteredProducts.map((product) => 
+                    <ProductListItem key={product.name} product={product} />
+                )}
+            </>
+        );
+    }
+}
+```
+
+```
+import React from 'react';
+
+export class ProductListItem extends React.Component {
+
+    render() {
+        return (
+            <tr key={this.props.product.name}>
+                <td>{this.props.product.name}</td>
+                <td>{this.props.product.price}</td>
+            </tr>
+        );
+    }
+}
+```
+
+- Also you can add a text box for filtering by product name.
