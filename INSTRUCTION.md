@@ -1,118 +1,61 @@
 # react-begins
 
-## Lab 2
+## Lab 3
 
-- Add the following into public/index.html:
+- src/product-grid 폴더를 만들고, ProductGrid.* 파일들을 그 폴더로 이동할 것.
 
-```
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous" />
-```
+- 브라우저 화면에서 컴파일 오류 시, 컴파일 오류를 수정할 것.
 
-- App 함수를 아래와 같이 교체
+- src/product-grid/index.js 파일을 아래 내용을 추가할 것.
 
 ```
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Shopper's Universe</h1>
-          <div class="column-md6">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colspan="2">Sporting Goods</td>
-              </tr>
-              <tr>
-                <td>Football</td>
-                <td>$49.99</td>
-              </tr>
-              <tr>
-                <td>Baseball</td>
-                <td>$9.99</td>
-              </tr>
-              <tr>
-                <td>Basketball</td>
-                <td>$29.99</td>
-              </tr>
-              <tr>
-                <td colspan="2">Electronics</td>
-              </tr>
-              <tr>
-                <td>iPod Touch</td>
-                <td>$99.99</td>
-              </tr>
-              <tr>
-                <td>iPhone 5</td>
-                <td>$399.99</td>
-              </tr>
-              <tr>
-                <td>Nexus 7</td>
-                <td>$29.99</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </header>
-    </div>
-  );
-}
+export * from './ProductGrid';
 ```
 
-- 화면에서 제품 목록 테이블이 잘 보여지는지 확인.
-
-- ProductGrid.js 파일을 추가하고, 아래와 같이 내용을 넣을 것.
+- src/App.js에서 ProductGrid 임포트 문을 아래와 같이 변경할 것.
 
 ```
+import { ProductGrid } from './product-grid';
+```
+
+- public/data/products-data.js 파일을 아래 내용으로 추가.
+
+```
+export var productsData = [
+  {category: "Sporting Goods", price: "$49.99", stocked: true, name: "Football"},
+  {category: "Sporting Goods", price: "$9.99", stocked: true, name: "Baseball"},
+  {category: "Sporting Goods", price: "$29.99", stocked: false, name: "Basketball"},
+  {category: "Electronics", price: "$99.99", stocked: true, name: "iPod Touch"},
+  {category: "Electronics", price: "$399.99", stocked: false, name: "iPhone 5"},
+  {category: "Electronics", price: "$199.99", stocked: true, name: "Nexus 7"}
+];
+```
+
+- ProductGrid 클래스를 아래와 같이 변경
+
+```
+import './ProductGrid.css';
 import React from 'react';
+import { productsData } from './products-data';
 
 export class ProductGrid extends React.Component {
 
     render() {
         return (
-            <table class="table">
+            <table className="table">
                 <thead>
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Price</th>
-                </tr>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Price</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr class="category">
-                    <td colspan="2">Sporting Goods</td>
-                </tr>
-                <tr>
-                    <td>Football</td>
-                    <td>$49.99</td>
-                </tr>
-                <tr>
-                    <td>Baseball</td>
-                    <td>$9.99</td>
-                </tr>
-                <tr>
-                    <td>Basketball</td>
-                    <td>$29.99</td>
-                </tr>
-                <tr class="category">
-                    <td colspan="2">Electronics</td>
-                </tr>
-                <tr>
-                    <td>iPod Touch</td>
-                    <td>$99.99</td>
-                </tr>
-                <tr>
-                    <td>iPhone 5</td>
-                    <td>$399.99</td>
-                </tr>
-                <tr>
-                    <td>Nexus 7</td>
-                    <td>$29.99</td>
-                </tr>
+                    {productsData.map((product) => (
+                        <tr key={product.name}>
+                            <td>{product.name}</td>
+                            <td>{product.price}</td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         );
@@ -120,42 +63,147 @@ export class ProductGrid extends React.Component {
 }
 ```
 
-- App.js는 아래와 같이 변경
+- 브라우저로 변경 사항 확인.
+
+- 위에서 문제점은 카테고리 이름 행이 제대로 표시되고 있지 않다는 것.
+  이를 개선해 보라.
+
+  아래와 같은 데이터 초기화 참조:
 
 ```
-import './App.css';
-import { ProductGrid } from './ProductGrid';
+    constructor(props) {
+        super(props);
+        this.state = { categories: [] };
+    }
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Shopper's Universe</h1>
-        <div class="column-md6">
-          <ProductGrid />
-        </div>
-      </header>
-    </div>
-  );
-}
-
-export default App;
+    componentDidMount() {
+        const categories = [];
+        productsData.forEach((prod) => {
+            const { category } = prod;
+            if (!categories[category]) {
+                categories[category] = [];
+            }
+            categories[category].push(prod);
+        });
+        this.setState({ categories });
+    }
 ```
 
-- 화면에서 제품 목록 테이블이 그대로 잘 보여지는지 확인.
-
-- 카테고리 행(Sporting Goods, Electronics)들이 다르게 보일 수 있도록, ProductGrid.css 파일을 아래 예와 같이 추가.
-
-```
-.category {
-  background-color: darkgray;
-}
-```
-
-- ProductGrid.js에서 css 파일 임포트 추가
+- 아래 예제 코드 참조:
 
 ```
 import './ProductGrid.css';
+import React from 'react';
+import { productsData } from './products-data';
+
+export class ProductGrid extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = { categories: [] };
+    }
+
+    componentDidMount() {
+        const categories = [];
+        productsData.forEach((prod) => {
+            const { category } = prod;
+            if (!categories[category]) {
+                categories[category] = [];
+            }
+            categories[category].push(prod);
+        });
+        this.setState({ categories });
+    }
+
+    render() {
+        return (
+            <table className="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {Object.keys(this.state.categories).map((category) =>
+                        <React.Fragment key={category}>
+                            <tr className="category">
+                                <td colSpan="2">{category}</td>
+                            </tr>
+                            {this.state.categories[category].map((product) =>
+                                <tr key={product.name}>
+                                    <td>{product.name}</td>
+                                    <td>{product.price}</td>
+                                </tr>
+                            )}
+                        </React.Fragment>
+                    )}
+                </tbody>
+            </table>
+        );
+    }
+}
 ```
 
-- 화면에서 제품 목록 테이블과 카테고리 행(Sporting Goods, Electronics)들이 다르게 보이는지 확인.
+- 다음으로는, 카테고리 별 제품 목록 블록 (즉, React.Fragment 안의 내용) 을 별도 컴포넌트로
+  분리하고 (예: CategoryProductList.js 클래스),
+  ProductGrid 클래스에서 그 새로운 컴포넌트를 호출하고 카테고리별 제품 리스트를
+  props로 전달하여 렌더링하는 방식으로 개선할 것.
+
+- 예제 솔루션) ProductGrid.render() 메소드를 아래와 같이 변경
+
+```
+    render() {
+        return (
+            <table className="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {Object.keys(this.state.categories).map((category) =>
+                        <CategoryProductList
+                            key={category}
+                            category={category}
+                            products={this.state.categories[category]} />
+                    )}
+                </tbody>
+            </table>
+        );
+    }
+```
+
+    그리고 CategoryProductList 클래스를 아래와 같이 작성
+
+```
+import './ProductGrid.css';
+import React from 'react';
+
+export class CategoryProductList extends React.Component {
+
+    constructor(props) {
+        super(props);
+        const { category, products } = props;
+        this.category = category;
+        this.products = products;
+    }
+
+    render() {
+        return (
+            <>
+                <tr className="category">
+                    <td colSpan="2">{this.category}</td>
+                </tr>
+                {this.products.map((product) =>
+                    <tr key={product.name}>
+                        <td>{product.name}</td>
+                        <td>{product.price}</td>
+                    </tr>
+                )}
+            </>
+        );
+    }
+}
+```
