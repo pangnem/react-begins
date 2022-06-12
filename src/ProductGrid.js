@@ -1,4 +1,5 @@
 import React from 'react';
+import './ProductGrid.css'
 
 export class ProductGrid extends React.Component {
 
