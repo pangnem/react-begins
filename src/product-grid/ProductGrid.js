@@ -1,20 +1,18 @@
 import './ProductGrid.css';
-import React from 'react';
-import {productsData} from './products-data';
+import React, {useEffect, useState} from 'react';
 import {CategoryProductList} from './CategoryProductList';
 
-export class ProductGrid extends React.Component {
+export function ProductGrid() {
+  const [error, setError] = useState(null);
+  const [loaded, setLoaded] = useState([false]);
+  const [categories, setCategories] = useState([]);
 
-  constructor(props) {
-    super(props);
-    this.state = {categories: []};
-  }
-
-  componentDidMount() {
-    const categories = [];
+  useEffect(() => {
     fetch('data/products-data.json')
       .then((res) => res.json())
       .then(result => {
+          const categories = [];
+
           result.forEach((prod) => {
             const {category} = prod;
             if (!categories[category]) {
@@ -22,40 +20,43 @@ export class ProductGrid extends React.Component {
             }
             categories[category].push(prod);
           });
-          this.setState({error: null, loaded: true, categories});
+
+          setError(null);
+          setLoaded(true);
+          setCategories(categories);
         }, (error) => {
-          this.setState({error, loaded: false, categories});
+          setError(error);
+          setLoaded(false);
+          setCategories(categories);
         },
       );
-  }
+  }, [])
 
-  render() {
-    return(
-      <>
-        {this.state.error &&
-          <div className="alert alert-danger" role="alert">
-            Error occurred...
-          </div>
-        }
-        {this.state.loaded &&
-          <table className="table">
-            <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Price</th>
-            </tr>
-            </thead>
-            <tbody>
-            {Object.keys(this.state.categories).map((category) =>
-              <CategoryProductList
-                key={category}
-                category={category}
-                products={this.state.categories[category]} />
-            )}
-            </tbody>
-          </table>
-        }
-      </>
-    );
-  }
+  return (
+    <>
+      {error &&
+        <div className="alert alert-danger" role="alert">
+          Error occurred...
+        </div>
+      }
+      {loaded &&
+        <table className="table">
+          <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Price</th>
+          </tr>
+          </thead>
+          <tbody>
+          {Object.keys(categories).map((category) =>
+            <CategoryProductList
+              key={category}
+              category={category}
+              products={categories[category]}/>
+          )}
+          </tbody>
+        </table>
+      }
+    </>
+  );
 }
