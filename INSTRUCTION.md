@@ -18,7 +18,7 @@ export * from './ProductGrid';
 import { ProductGrid } from './product-grid';
 ```
 
-- public/data/products-data.js 파일을 아래 내용으로 추가.
+- src/product-grid/products-data.js 파일을 아래 내용으로 추가.
 
 ```
 export var productsData = [
