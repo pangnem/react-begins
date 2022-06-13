@@ -1,5 +1,5 @@
 import './App.css';
-import { ProductGrid } from './ProductGrid';
+import { ProductGrid } from './product-grid/ProductGrid';
 
 function App() {
   return (
