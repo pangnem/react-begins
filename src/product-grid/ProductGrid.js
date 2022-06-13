@@ -1,6 +1,7 @@
 import './ProductGrid.css';
 import React from 'react';
 import {productsData} from './products-data';
+import {CategoryProductList} from './CategoryProductList';
 
 export class ProductGrid extends React.Component {
   constructor(props) {
@@ -31,18 +32,11 @@ export class ProductGrid extends React.Component {
         </thead>
         <tbody>
         {Object.keys(this.state.categories).map(category =>
-          <React.Fragment key={category}>
-            <tr className={"category"}>
-              <td colSpan="2">{category}</td>
-            </tr>
-            {this.state.categories[category].map(product =>
-              <tr key={product.name}>
-                <td>{product.name}</td>
-                <td>{product.price}</td>
-              </tr>
-            )}
-
-          </React.Fragment>
+          <CategoryProductList
+            key={category}
+            category={category}
+            products={this.state.categories[category]}
+          />
         )}
         </tbody>
       </table>
